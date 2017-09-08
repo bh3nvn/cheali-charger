@@ -30,7 +30,7 @@ namespace debug {
     inline void print(int8_t x) { SerialLog::printInt(x); }
     inline void print(uint16_t x) { SerialLog::printUInt(x); }
     inline void print(int16_t x) { SerialLog::printInt(x); }
-    inline void print(uint32_t x) { SerialLog::printUInt(x); }
+    inline void print(uint32_t x) { SerialLog::printLong(x); }
     inline void print(const char * x) { SerialLog::printString(x); }
     inline void print(void * x) { SerialLog::printLong((long)x); }
     inline void begin() { print('D'); print(Time::getMiliseconds()); print(':'); };
@@ -56,9 +56,13 @@ namespace debug {
 #define LogDebug_N2(N, args...) LogDebug_ ## N(args)
 #define LogDebug_N(N, args...) LogDebug_N2(N, args)
 #define LogDebug(args...) do { debug::begin(); LogDebug_N(NUM_ARGS(args), args); debug::end(); } while(0)
+
+#define runDebug(x) x
+
 #else
 
 #define LogDebug(...)
+#define runDebug(x)
 
 #endif
 

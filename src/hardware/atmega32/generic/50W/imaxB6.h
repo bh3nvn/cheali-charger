@@ -20,7 +20,6 @@
 
 #include "HardwareConfig.h"
 
-#include "LiquidCrystal.h"
 #include "Keyboard.h"
 #include "Time.h"
 #include "SMPS.h"
@@ -28,11 +27,8 @@
 #include "Buzzer.h"
 
 #include "Timer1.h"
-#include "imaxB6-pins.h"
 
 #include STRINGS_HEADER
-
-extern LiquidCrystal lcd;
 
 namespace hardware {
     void initializePins();
@@ -52,7 +48,6 @@ namespace hardware {
     void setBalancer(uint8_t balance);
     void doInterrupt();
 
-    void soundInterrupt();
     uint16_t getPIDValue();
 
     inline void setExternalTemperatueOutput(bool enable) {};

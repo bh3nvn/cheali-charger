@@ -66,9 +66,10 @@ namespace ProgramMenus {
 }
 
 namespace options {
-    STRING(settings, "settings");
-    STRING(calibrate, "calibrate");
-    STRING(resetDefault, "reset default");
+    STRING(options,         "options");
+    STRING(settings,        "settings");
+    STRING(calibrate,       "calibrate");
+    STRING(resetDefault,    "reset default");
 }
 
 namespace ProgramData {
@@ -100,18 +101,22 @@ namespace SettingsMenu {
     STRING(maxIc,       "max Ic:");
     STRING(minId,       "min Id:");
     STRING(maxId,       "max Id:");
-    STRING(inputLow,    "input low: ");
+    STRING(maxPc,       "max Pc:");
+    STRING(maxPd,       "max Pd:");
+    STRING(inputLow,    "input low:");
     STRING(adcNoise,    "adc noise:");
     STRING(UARTview,    "UART:");
     STRING(UARTspeed,   "|speed:");
     STRING(UARToutput,  "|output:");
     STRING(MenuType,    "menus:");
+    STRING(MenuButtons, "buttons:");
     STRING(reset,       "reset");
 
     //UARToutput menu
-    STRING(temp,    "temp");
-    STRING(pin7,    "pin7");
-    STRING(pin38,   "pin38");
+    STRING(temp,        "temp");
+    STRING(separated,   "separ");
+    STRING(pin7,        "pin7");
+    STRING(pin38,       "pin38");
 
     //UART view menu
     STRING(disable,     "disabled");
@@ -130,6 +135,10 @@ namespace SettingsMenu {
     //MenuType
     STRING(simple,      "simple");
     STRING(advanced,    "advanced");
+
+    //MenuButtons
+    //STRING(normal,      "normal"); - defined in UART view
+    STRING(reversed,      "rev");
 
 }
 
@@ -169,7 +178,7 @@ namespace DeltaChargeStrategy {
     STRING(externalTemperatureReachedDeltaTLimit,   "dT/dt");
 }
 
-namespace Calibrate {
+namespace Calibration {
     STRING(connect,     "connect");
     STRING(disconnect,  "disconnect");
     STRING(battery,     "battery!");
@@ -181,7 +190,7 @@ namespace Calibrate {
     STRING(dischargeCurrent,    "I discharge");
     STRING(externalTemperature, "temp extern");
     STRING(internalTemperature, "temp intern");
-    STRING(extertsVoltage,      "expert DANGER!");
+    STRING(expertVoltage,       "expert DANGER!");
 
 
     //calibration voltage menu

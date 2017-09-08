@@ -19,6 +19,12 @@
 #include "Hardware.h"
 #include "adc.h"
 #include "IO.h"
+#include "Timer0.h"
+#include "LiquidCrystal.h"
+
+#ifndef PINS_H_
+#error pins not defined (include *pins.h header in your HardwareConfig.h)
+#endif
 
 void hardware::initializePins()
 {
@@ -55,7 +61,9 @@ void hardware::initializePins()
 
 void hardware::initialize()
 {
-    lcd.begin(LCD_COLUMNS, LCD_LINES);
+    LiquidCrystal::init();
+    LiquidCrystal::begin(LCD_COLUMNS, LCD_LINES);
+    Timer0::initialize();
     Timer1::initialize();
     adc::initialize();
     setVoutCutoff(MAX_CHARGE_V);
@@ -78,16 +86,6 @@ void hardware::setFan(bool enable)
     IO::digitalWrite(FAN_PIN, enable);
 }
 
-void hardware::soundInterrupt()
-{
-}
-
-void hardware::setBuzzer(uint8_t val)
-{
-    //TODO: this should be rewritten, sorry for that :D
-    //Timer2 is now used by the Timer.cpp implementation
-    IO::digitalWrite(BUZZER_PIN, (val&1));
-}
 
 void hardware::setBatteryOutput(bool enable)
 {
@@ -135,7 +133,4 @@ void hardware::setBalancer(uint8_t v)
 void hardware::setBalancerOutput(bool enable)
 {
 }
-
-
-LiquidCrystal lcd;
 

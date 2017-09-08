@@ -38,15 +38,15 @@
 
 
 namespace Monitor {
-
-    uint16_t etaDeltaSec;
-    uint16_t etaStartTimeCalc;
+    volatile uint8_t i_externalError;
+    uint32_t etaDeltaSec;
+    uint32_t etaStartTimeCalc;
 
     bool isBalancePortConnected;
 
     bool on_;
     uint8_t procent_;
-    uint16_t startTime_totalTime_U16_;
+    uint32_t startTime_totalTime_;
     uint32_t totalBalanceTime_;
     uint32_t totalChargDischargeTime_;
 
@@ -59,11 +59,11 @@ namespace Monitor {
 
 void Monitor::calculateDeltaProcentTimeSec()
 {
-    uint16_t etaSec;
+    uint32_t etaSec;
     uint8_t procent = Monitor::getChargeProcent();
     if(procent_ < procent) {
         procent_ = procent;
-        etaSec = Time::diffU16(Monitor::etaStartTimeCalc, Monitor::getTimeSec());
+        etaSec = Monitor::etaStartTimeCalc-Monitor::getTimeSec();
         etaStartTimeCalc = Monitor::getTimeSec();
         if (etaSec > etaDeltaSec)  {
             etaDeltaSec=etaSec; // find longer time for deltaprocent
@@ -71,7 +71,7 @@ void Monitor::calculateDeltaProcentTimeSec()
     }
 }
 
-uint16_t Monitor::getETATime()
+uint32_t Monitor::getETATime()
 {
     calculateDeltaProcentTimeSec();
     uint8_t kx = 105;
@@ -84,18 +84,18 @@ uint16_t Monitor::getETATime()
     return (etaDeltaSec*(kx-procent_));
 }
 
-uint16_t Monitor::getTimeSec()
+uint32_t Monitor::getTimeSec()
 {
-    uint16_t t = startTime_totalTime_U16_;
-    if(on_) t = Time::diffU16(startTime_totalTime_U16_, Time::getSecondsU16());
+    uint32_t t = startTime_totalTime_;
+    if(on_) t = Time::getSeconds() - startTime_totalTime_;
     return t;
 }
 
-uint16_t Monitor::getTotalBalanceTimeSec() {
+uint32_t Monitor::getTotalBalanceTimeSec() {
     return totalBalanceTime_/1000;
 }
 
-uint16_t Monitor::getTotalChargeDischargeTimeSec() {
+uint32_t Monitor::getTotalChargeDischargeTimeSec() {
     return totalChargDischargeTime_/1000;
 }
 
@@ -171,9 +171,11 @@ void Monitor::powerOn()
 
     isBalancePortConnected = AnalogInputs::isBalancePortConnected();
 
-    startTime_totalTime_U16_ = Time::getSecondsU16();
+    startTime_totalTime_ = Time::getSeconds();
     resetAccumulatedMeasurements();
+    i_externalError = MONITOR_EXTERNAL_ERROR_NONE;
     on_ = true;
+    AnalogInputs::saveBalancePortState();
 }
 
 void Monitor::resetAccumulatedMeasurements()
@@ -189,7 +191,7 @@ void Monitor::resetAccumulatedMeasurements()
 
 void Monitor::powerOff()
 {
-    startTime_totalTime_U16_ = getTimeSec();
+    startTime_totalTime_ = getTimeSec();
     on_ = false;
 }
 
@@ -219,6 +221,12 @@ Strategy::statusType Monitor::run()
 
     AnalogInputs::ValueType VMout = AnalogInputs::getADCValue(AnalogInputs::Vout_plus_pin);
     if(Vout_plus_adcMaxLimit_ <= VMout || (VMout < Vout_plus_adcMinLimit_ && Discharger::isPowerOn())) {
+        Program::stopReason = string_batteryDisconnected;
+        return Strategy::ERROR;
+    }
+
+    uint8_t externalError = i_externalError;
+    if(externalError == MONITOR_EXTERNAL_ERROR_BATTERY_DISCONNECTED) {
         Program::stopReason = string_batteryDisconnected;
         return Strategy::ERROR;
     }

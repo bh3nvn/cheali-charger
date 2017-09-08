@@ -18,7 +18,7 @@
 #ifndef SETTINGS_H_
 #define SETTINGS_H_
 
-#include <inttypes.h>
+#include <stdint.h>
 #include "AnalogInputs.h"
 
 
@@ -27,8 +27,14 @@ struct Settings {
     enum UARTType {Disabled, Normal,  Debug,  ExtDebug, ExtDebugAdc};
     enum FanOnType {FanDisabled, FanAlways, FanProgram, FanTemperature, FanProgramTemperature};
 
-    enum UARTOutput {Software, HardwarePin7, HardwarePin38};
+    enum UARTOutput {TempOutput, Separated
+#ifdef ENABLE_TX_HW_SERIAL_PIN7_PIN38
+        , HardwarePin7, HardwarePin38
+#endif
+    };
     enum MenuType  {MenuSimple, MenuAdvanced};
+    enum MenuButtonsType  {MenuButtonsNormal, MenuButtonsReversed};
+
     static const uint16_t UARTSpeeds = 5;
     static const AnalogInputs::ValueType TempDifference = ANALOG_CELCIUS(5.12);
     uint16_t backlight;
@@ -43,12 +49,16 @@ struct Settings {
     AnalogInputs::ValueType minId;
     AnalogInputs::ValueType maxId;
 
+    AnalogInputs::ValueType maxPc;
+    AnalogInputs::ValueType maxPd;
+
     AnalogInputs::ValueType inputVoltageLow;
     uint16_t adcNoise;
     uint16_t UART;
     uint16_t UARTspeed;
     uint16_t UARToutput;
     uint16_t menuType;
+    uint16_t menuButtons;
 
     void apply();
     void setDefault();

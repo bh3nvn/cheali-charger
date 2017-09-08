@@ -28,8 +28,26 @@
 #endif
 
 #ifndef SETTINGS_ADC_NOISE_DEFAULT
-#define SETTINGS_ADC_NOISE_DEFAULT 0
+#define SETTINGS_ADC_NOISE_DEFAULT  0
 #endif
+
+#ifndef SETTINGS_MAX_CHARGE_I
+#define SETTINGS_MAX_CHARGE_I       MAX_CHARGE_I
+#endif
+
+#ifndef SETTINGS_MAX_DISCHARGE_I
+#define SETTINGS_MAX_DISCHARGE_I    MAX_DISCHARGE_I
+#endif
+
+#ifndef SETTINGS_MAX_CHARGE_P
+#define SETTINGS_MAX_CHARGE_P    MAX_CHARGE_P
+#endif
+
+#ifndef SETTINGS_MAX_DISCHARGE_P
+#define SETTINGS_MAX_DISCHARGE_P    MAX_DISCHARGE_P
+#endif
+
+
 
 Settings settings;
 
@@ -41,16 +59,21 @@ const Settings defaultSettings PROGMEM = {
 
         1,                  //AudioBeep: yes/no
         ANALOG_AMP(0.050),  //minIc
-        MAX_CHARGE_I,       //maxIc
+        SETTINGS_MAX_CHARGE_I,       //maxIc
         ANALOG_AMP(0.050),  //minId
-        MAX_DISCHARGE_I,    //maxId
+        SETTINGS_MAX_DISCHARGE_I,    //maxId
+
+        SETTINGS_MAX_CHARGE_P, //maxPc
+        SETTINGS_MAX_DISCHARGE_P, //maxPd
+
         ANALOG_VOLT(10.000),//inputVoltageLow
 
         SETTINGS_ADC_NOISE_DEFAULT, //adcNoise
         Settings::Disabled, //UART - disabled
         3,                   //57600
-        Settings::Software, //UARToutput
+        Settings::TempOutput, //UARToutput
         Settings::MenuSimple, //menuType
+        Settings::MenuButtonsReversed, //menuButtons
 };
 
 

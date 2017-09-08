@@ -18,9 +18,6 @@
 #include "Hardware.h"
 #include "SMPS.h"
 #include "Program.h"
-#include "EditMenu.h"
-#include "LcdPrint.h"
-#include "Screen.h"
 #include "Settings.h"
 
 #ifndef SMPS_MAX_CURRENT_CHANGE
@@ -60,7 +57,7 @@ namespace SMPS {
         }
 #endif
 
-        AnalogInputs::ValueType i = AnalogInputs::evalI(MAX_CHARGE_P, v);
+        AnalogInputs::ValueType i = AnalogInputs::evalI(settings.maxPc, v);
         if(i > settings.maxIc)
             i = settings.maxIc;
         return i;

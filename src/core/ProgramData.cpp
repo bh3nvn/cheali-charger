@@ -44,8 +44,11 @@ const AnalogInputs::ValueType voltsPerCell[][ProgramData::LAST_VOLTAGE_TYPE] PRO
 //http://batteryuniversity.com/learn/article/charging_the_lead_acid_battery
 /*Pb*/      { ANALOG_VOLT(2.000), ANALOG_VOLT(2.450), ANALOG_VOLT(1.750), ANALOG_VOLT(0.000), ANALOG_VOLT(1.900)},
 
-//LiXX - see also settings: overCharge_LiXX, overDischarge_LiXX
-/*Life*/    { ANALOG_VOLT(3.300), ANALOG_VOLT(3.600), ANALOG_VOLT(2.000), ANALOG_VOLT(3.300), ANALOG_VOLT(3.000)},
+//LiXX
+//based on imaxB6 manual
+//https://github.com/stawel/cheali-charger/issues/184
+/*Life*/    { ANALOG_VOLT(3.300), ANALOG_VOLT(3.600), ANALOG_VOLT(2.500), ANALOG_VOLT(3.300), ANALOG_VOLT(3.000)},
+//based on imaxB6 manual
 /*Lilo*/    { ANALOG_VOLT(3.600), ANALOG_VOLT(4.100), ANALOG_VOLT(2.500), ANALOG_VOLT(3.750), ANALOG_VOLT(3.500)},
 /*LiPo*/    { ANALOG_VOLT(3.700), ANALOG_VOLT(4.200), ANALOG_VOLT(3.000), ANALOG_VOLT(3.850), ANALOG_VOLT(3.209)},
 /*Li430*/   { ANALOG_VOLT(3.700), ANALOG_VOLT(4.300), ANALOG_VOLT(3.000), ANALOG_VOLT(3.850), ANALOG_VOLT(3.209)},
@@ -161,7 +164,7 @@ uint16_t ProgramData::getMaxIc()
     }
 #endif
 
-    AnalogInputs::ValueType i = AnalogInputs::evalI(MAX_CHARGE_P, v);
+    AnalogInputs::ValueType i = AnalogInputs::evalI(settings.maxPc, v);
 
     if(i > settings.maxIc)
         i = settings.maxIc;
@@ -171,7 +174,7 @@ uint16_t ProgramData::getMaxIc()
 uint16_t ProgramData::getMaxId()
 {
     AnalogInputs::ValueType v = getDefaultVoltage(VDischarged);
-    AnalogInputs::ValueType i = AnalogInputs::evalI(MAX_DISCHARGE_P, v);
+    AnalogInputs::ValueType i = AnalogInputs::evalI(settings.maxPd, v);
 
     if(i > settings.maxId)
         i = settings.maxId;
@@ -180,7 +183,7 @@ uint16_t ProgramData::getMaxId()
 
 uint16_t ProgramData::getMaxCells()
 {
-    if(battery.type == Unknown || battery.type == LED)
+    if(battery.type == UnknownBatteryType || battery.type == LED)
         return 1;
     uint16_t v = getDefaultVoltagePerCell(VCharged);
     return MAX_CHARGE_V / v;
@@ -239,7 +242,7 @@ void ProgramData::saveProgramData(uint8_t index)
 
 void ProgramData::restoreDefault()
 {
-    battery.type = None;
+    battery.type = NoneBatteryType;
     changedType();
 
     for(int i=0;i< MAX_PROGRAMS;i++) {
@@ -253,8 +256,7 @@ void ProgramData::changedType()
     battery.Vc_per_cell = getDefaultVoltagePerCell(VCharged);
     battery.Vd_per_cell = getDefaultVoltagePerCell(VDischarged);
 
-    if(battery.type == None) {
-        battery.type = None;
+    if(battery.type == NoneBatteryType) {
         battery.capacity = ANALOG_CHARGE(2.000);
         battery.cells = 3;
 
@@ -315,17 +317,17 @@ void ProgramData::changedCapacity()
 void ProgramData::printProgramData(uint8_t index)
 {
     loadProgramData(index);
-    if(battery.type != None) {
+    if(battery.type != NoneBatteryType) {
         Screen::StartInfo::printBatteryString();
         lcdPrintSpace1();
     }
 
     switch(battery.type) {
-    case None:
+    case NoneBatteryType:
         lcdPrintUInt(index+1);
         lcdPrintChar(':');
         break;
-    case Unknown:
+    case UnknownBatteryType:
         Screen::StartInfo::printVoltageString(9);
         break;
     case LED:

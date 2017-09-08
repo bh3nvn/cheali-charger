@@ -36,23 +36,23 @@ namespace Screen { namespace Cycle {
 
     //TODO_NJ for cyclehistory
     uint16_t cyclesHistoryCapacity[10];
-    uint16_t cyclesHistoryTime[10];
+    uint32_t cyclesHistoryTime[10];
 
 } // namespace Screen
 } // namespace Cycle
 
 void Screen::Cycle::displayCycles()
 {
-    uint8_t c, time = blink.blinkTime_/8;
+    uint8_t c, time = Blink::blinkTime_/8;
     uint8_t all_scr = ProgramDCcycle::currentCycle/2 + 1;
     c = time % all_scr;
     lcdSetCursor0_0();
     lcdPrintUnsigned(c+1, 1);
     lcdPrintChar(SCREEN_EMPTY_CELL_CHAR);
-    lcdPrintTime(cyclesHistoryTime[c*2]);
+    lcdPrintTime(cyclesHistoryTime[c*2], 6);
     lcdPrintSpace1();
     lcdPrintChar(SCREEN_FULL_CELL_CHAR);
-    lcdPrintTime(cyclesHistoryTime[c*2+1]);
+    lcdPrintTime(cyclesHistoryTime[c*2+1], 6);
     lcdPrintSpaces();
 
     lcdSetCursor0_1();

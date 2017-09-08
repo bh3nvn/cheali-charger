@@ -94,12 +94,9 @@ void powerOn()
 
 #ifdef ENABLE_EXT_TEMP_AND_UART_COMMON_OUTPUT
     if(ProgramData::battery.enable_externT)
-#ifdef ENABLE_TX_HW_SERIAL
-        if(settings.UARToutput == Settings::Software)
-#endif
+        if(settings.UARToutput == Settings::TempOutput)
             return;
 #endif
-
 
     serialBegin();
 
@@ -151,7 +148,6 @@ void doIdle()
             send();
         }
     }
-    //TODO: remove
     LogDebug_run();
 }
 
@@ -217,7 +213,7 @@ void sendHeader(uint16_t channel)
     printUInt(Program::programType+1);
     printD();
 
-    printUInt(currentTime/1000);   //timestamp
+    printLong(currentTime/1000);   //timestamp
     printChar('.');
     printUInt((currentTime/100)%10);   //timestamp
     printD();
@@ -261,7 +257,7 @@ void sendChannel1()
 
     printUInt(Monitor::getChargeProcent());
     printD();
-    printUInt(Monitor::getETATime());
+    printLong(Monitor::getETATime());
     printD();
 
     sendEnd();

@@ -20,20 +20,24 @@
 
 #include "Strategy.h"
 
+#define MONITOR_EXTERNAL_ERROR_NONE                         0
+#define MONITOR_EXTERNAL_ERROR_BATTERY_DISCONNECTED         1
+
 namespace Monitor {
-    extern uint16_t etaDeltaSec;
+    extern uint32_t etaDeltaSec;
     extern bool isBalancePortConnected;
+    extern volatile uint8_t i_externalError;
 
     Strategy::statusType run();
     void doIdle();
     void powerOn();
     void powerOff();
 
-    uint16_t getTimeSec();
-    uint16_t getTotalBalanceTimeSec();
-    uint16_t getTotalChargeDischargeTimeSec();
+    uint32_t getTimeSec();
+    uint32_t getTotalBalanceTimeSec();
+    uint32_t getTotalChargeDischargeTimeSec();
     uint16_t getTotalChargeDischargeTimeMin();
-    uint16_t getETATime();
+    uint32_t getETATime();
 
     uint8_t getChargeProcent();
 
